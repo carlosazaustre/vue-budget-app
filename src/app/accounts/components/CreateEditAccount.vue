@@ -1,23 +1,26 @@
 <template>
   <div id="accounts-create-edit-view">
     You can create and edit accounts with me, Yipee!
+    
     <router-link :to="{ name: 'accountsListView' }">View all accounts</router-link>
-    <form class="form" @submit.prevent="saveNewAccount">
+    
+    <form class="form" @submit.prevent="processSave">
       <label for="name" class="label">Name</label>
       <p class="control">
-        <input type="text" class="input" name="name" v-model="newAccount.name">
+        <input type="text" class="input" name="name" v-model="selectedAccount.name">
       </p>
       <label for="category" class="label">Category</label>
       <p class="control">
         <span class="select">
-          <select name="category" v-model="newAccount.category">
+          <select name="category" v-model="selectedAccount.category">
             <option v-for="(value, key) in categories" :value="key" :key="key">{{ value }}</option>
           </select>
         </span>
       </p>
       <label for="balance" class="label">Balance</label>
       <p class="control">
-        <input type="text" class="input" name="balance" v-model="newAccount.balance">
+        <input v-if="!editing" type="text" class="input" name="balance" v-model="selectedAccount.balance">
+        <span v-else>To update your balance, add a balance adjusting transaction</span>
       </p>
       <div class="control is-grouped">
         <p class="control">
@@ -32,7 +35,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { CATEGORIES } from '@/consts'
 
 export default {
@@ -41,28 +44,64 @@ export default {
   data () {
     return {
       categories: CATEGORIES,
-      newAccount: {}
+      seletedAccount: {},
+      editing: false
+    }
+  },
+
+  mounted () {
+    if ('accountId' in this.$route.params) {
+      let selectedAccount = this.getAccountById(this.$route.params.accountId)
+      if (selectedAccount) {
+        this.editing = true
+        this.selectedAccount = {
+          name: selectedAccount.name,
+          category: selectedAccount.category,
+          id: selectedAccount.id
+        }
+      }
+      // TODO
     }
   },
 
   methods: {
     ...mapActions([
-      'addAccount'
+      'addAccount',
+      'updateAccount'
     ]),
 
+    resetAndGo () {
+      this.seletedAccount = {}
+      this.$router.push({ name: 'accountsListView' })
+    },
+
     saveNewAccount () {
-      this.addAccount(this.newAccount).then(() => {
-        this.newAccount = {}
+      this.addAccount(this.seletedAccount).then(() => {
+        this.resetAndGo()
       })
+    },
+
+    saveAccount () {
+      this.updateAccount(this.seletedAccount).then(() => {
+        this.resetAndGo()
+      })
+    },
+
+    processSave () {
+      this.editing ? this.saveAccount() : this.saveNewAccount()
     }
+  },
+
+  computed: {
+    ...mapGetters([
+      'getAccountById'
+    ])
   }
 }
 </script>
 
 <style lang="scss" scoped>
-#accounts-create-edit-view {
-
-}
+#accounts-create-edit-view {}
 </style>
 
 
