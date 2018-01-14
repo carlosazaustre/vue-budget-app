@@ -1,9 +1,9 @@
 <template>
   <div id="accounts-create-edit-view">
-    You can create and edit accounts with me, Yipee!
-    
+    You can create and edit accounts with me, yippee!
+
     <router-link :to="{ name: 'accountsListView' }">View all accounts</router-link>
-    
+
     <form class="form" @submit.prevent="processSave">
       <label for="name" class="label">Name</label>
       <p class="control">
@@ -19,8 +19,8 @@
       </p>
       <label for="balance" class="label">Balance</label>
       <p class="control">
-        <input v-if="!editing" type="text" class="input" name="balance" v-model="selectedAccount.balance">
-        <span v-else>To update your balance, add a balance adjusting transaction</span>
+        <input type="text" class="input" name="balance" v-model="selectedAccount.balance" v-if="!editing">
+        <span v-else>To update your balance, add a balance adjusting transaction.</span>
       </p>
       <div class="control is-grouped">
         <p class="control">
@@ -41,10 +41,10 @@ import { CATEGORIES } from '@/consts'
 export default {
   name: 'accounts-create-edit-view',
 
-  data () {
+  data: () => {
     return {
       categories: CATEGORIES,
-      seletedAccount: {},
+      selectedAccount: {},
       editing: false
     }
   },
@@ -60,7 +60,7 @@ export default {
           id: selectedAccount.id
         }
       }
-      // TODO
+      // TODO: the object does not exist, how do we handle this scenario?
     }
   },
 
@@ -71,18 +71,18 @@ export default {
     ]),
 
     resetAndGo () {
-      this.seletedAccount = {}
+      this.selectedAccount = {}
       this.$router.push({ name: 'accountsListView' })
     },
 
     saveNewAccount () {
-      this.addAccount(this.seletedAccount).then(() => {
+      this.addAccount(this.selectedAccount).then(() => {
         this.resetAndGo()
       })
     },
 
     saveAccount () {
-      this.updateAccount(this.seletedAccount).then(() => {
+      this.updateAccount(this.selectedAccount).then(() => {
         this.resetAndGo()
       })
     },
@@ -100,8 +100,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-#accounts-create-edit-view {}
+<style scoped lang='scss'>
+#accounts-create-edit-view {
+}
 </style>
-
-

@@ -1,4 +1,4 @@
-# budgetapp
+# vue-budgetapp
 
 > Follow the Vue.js tutorial at https://matthiashager.com/complete-vuejs-application-tutorial
 
